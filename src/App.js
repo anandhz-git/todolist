@@ -1,23 +1,76 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
 
 function App() {
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+  const [toDos, setToDos] = useState([]);
+  const [toDo, setToDo] = useState('');
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <center>
+        <div className="mainHeading">
+          <h1>ToDo List</h1>
+        </div>
+        <div className="subHeading">
+          <br />
+          <h1>Whoop, it's {today}!</h1>
+        </div>
+      </center>
+
+      <div className="input">
+        <input
+          value={toDo}
+          onChange={(e) => setToDo(e.target.value)}
+          type="text"
+          placeholder="🖊️ Add item..."
+        />
+        <i
+          onClick={() => {
+            if (toDo.trim() !== "") {
+              setToDos([...toDos, { id: Date.now(), text: toDo, status: false }]);
+              setToDo(""); // ✅ clears input box
+            }
+          }}
+          className="fas fa-plus"
+        ></i>
+      </div>
+
+      <div className="todos">
+        {toDos.map((obj) => {
+          return (
+            <div className="todo" key={obj.id}>
+              <div className="left">
+                <input
+                  type="checkbox"
+                  checked={obj.status}
+                  onChange={(e) => {
+                    setToDos(
+                      toDos.map((obj2) =>
+                        obj2.id === obj.id
+                          ? { ...obj2, status: e.target.checked }
+                          : obj2
+                      )
+                    );
+                  }}
+                />
+                <p style={{ textDecoration: obj.status ? 'line-through' : 'none' }}>
+                  {obj.text}
+                </p>
+              </div>
+              <div className="right">
+                <i
+                  onClick={() =>
+                    setToDos(toDos.filter((obj2) => obj2.id !== obj.id))
+                  }
+                  className="fas fa-times">
+
+                </i>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
